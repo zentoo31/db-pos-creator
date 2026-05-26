@@ -2,6 +2,7 @@ import argparse
 import asyncio
 
 import script
+from db import json as json_db
 from db import mongodb
 
 parser = argparse.ArgumentParser(
@@ -17,6 +18,11 @@ parser.add_argument(
     action="store_true",
     help="Guardar productos en MongoDB (requiere --products)",
 )
+parser.add_argument(
+    "--json",
+    action="store_true",
+    help="Guardar productos en products.json (requiere --products)",
+)
 
 args = parser.parse_args()
 
@@ -25,11 +31,15 @@ if args.status:
 if args.pag:
     script.verPag()
 if args.products:
-    if args.mongodb:
+    if args.mongodb or args.json:
         products = script.getProductsAbarrotes(args.products, show=False)
-        inserted = asyncio.run(mongodb.create_db_vea_and_insert_products(products))
-        print(f"Se insertaron {inserted} productos en db_vea.")
+        if args.mongodb:
+            inserted = asyncio.run(mongodb.create_db_vea_and_insert_products(products))
+            print(f"Se insertaron {inserted} productos en db_vea.")
+        if args.json:
+            output_path = json_db.save_products_json(products)
+            print(f"Se guardaron {len(products)} productos en {output_path}.")
     else:
         script.getProductsAbarrotes(args.products)
-elif args.mongodb:
-    print("Debes indicar --products <n> para importar en MongoDB.")
+elif args.mongodb or args.json:
+    print("Debes indicar --products <n> para importar.")
