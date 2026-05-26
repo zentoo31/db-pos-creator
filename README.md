@@ -2,6 +2,8 @@
 
 Este programa scrapea la web de Plaza Vea (https://www.plazavea.com.pe/) para obtener productos de abarrotes y permite crear una base de datos con esos productos según la base de datos elegida.
 
+![Plaza Vea](img/images.png)
+
 Actualmente soporta MongoDB.
 
 Uso rápido:
