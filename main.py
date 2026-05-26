@@ -1,6 +1,8 @@
 import argparse
+import asyncio
 
 import script
+from db import mongodb
 
 parser = argparse.ArgumentParser(
     description="Herramienta para crear base de datos para proyectos de inventario, POS, etc. Se usa Plaza Vea como target scraper"
@@ -10,6 +12,11 @@ parser.add_argument(
 )
 parser.add_argument("--pag", action="store_true", help="Ver la pag de plaza vea")
 parser.add_argument("--products", action="store", help="Ver los productos a importar")
+parser.add_argument(
+    "--mongodb",
+    action="store_true",
+    help="Guardar productos en MongoDB (requiere --products)",
+)
 
 args = parser.parse_args()
 
@@ -18,4 +25,11 @@ if args.status:
 if args.pag:
     script.verPag()
 if args.products:
-    script.getProductsAbarrotes(args.products)
+    if args.mongodb:
+        products = script.getProductsAbarrotes(args.products, show=False)
+        inserted = asyncio.run(mongodb.create_db_vea_and_insert_products(products))
+        print(f"Se insertaron {inserted} productos en db_vea.")
+    else:
+        script.getProductsAbarrotes(args.products)
+elif args.mongodb:
+    print("Debes indicar --products <n> para importar en MongoDB.")

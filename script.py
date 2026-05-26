@@ -5,7 +5,7 @@ url = "https://www.plazavea.com.pe/"
 url_api = "https://www.plazavea.com.pe/api/catalog_system/pub/products/search?fq=C:/431/&_from=1&_to=50&O=OrderByScoreDESC&"
 
 
-def getProductsAbarrotes(nro):
+def getProductsAbarrotes(nro, show=True):
 
     all_products = []
 
@@ -36,8 +36,11 @@ def getProductsAbarrotes(nro):
 
         all_products.extend(products)
 
-    print(all_products)
-    print("numero de elementos: " + str(len(all_products)))
+    if show:
+        print(all_products)
+        print("numero de elementos: " + str(len(all_products)))
+
+    return all_products
 
 
 def verPag():
